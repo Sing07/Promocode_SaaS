@@ -1,4 +1,5 @@
 import { BrandLogo } from "@/components/BrandLogo";
+import { SignedIn, SignedOut } from "@clerk/nextjs"
 import Link from "next/link";
 import React from "react";
 
@@ -9,6 +10,23 @@ export default function NavBar() {
                 <Link href="/" className="mr-auto">
                     <BrandLogo />
                 </Link>
+                <Link href="/" className="mr-auto">
+                    Features
+                </Link>
+                <Link href="/" className="mr-auto">
+                    Pricing
+                </Link>
+                <Link href="/" className="mr-auto">
+                    About
+                </Link>
+                <span className="text-lg">
+                    <SignedIn>
+                        <Link href="/dashboard">Dashboard</Link>
+                    </SignedIn>
+                    <SignedOut>
+                        <Link href="/dashboard">Login</Link>
+                    </SignedOut>
+                </span>
             </nav>
         </header>
     );
