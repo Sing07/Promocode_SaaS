@@ -1,7 +1,7 @@
 import { env } from "@/data/env/server";
-import { defineConfig } from "drizzle-kit"
+import { defineConfig } from "drizzle-kit";
 
-export defauly defineConfig({
+export default defineConfig({
     schema: "./src/drizzle/schema.ts",
     out: "./src/drizzle/migrations",
     dialect: "postgresql",
@@ -9,5 +9,5 @@ export defauly defineConfig({
     verbose: true,
     dbCredentials: {
         url: env.DATABASE_URL,
-    }
-})
+    },
+});
