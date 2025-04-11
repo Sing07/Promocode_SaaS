@@ -1,24 +1,20 @@
 import { BrandLogo } from "@/components/BrandLogo";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 
 export default function NavBar() {
     return (
-        <header className="flex py-6 shadow-xl fixed top-0 w-full z-10 bg-background/95">
+        <header className="flex py-4 shadow fixed top-0 w-full  bg-background/95">
             <nav className="flex items-center gap-10 container font-semibold">
-                <Link href="/" className="mr-auto">
+                <Link href="/dashboard" className="mr-auto">
                     <BrandLogo />
                 </Link>
-                <Link href="/" className="mr-auto">
-                    Features
-                </Link>
-                <Link href="/" className="mr-auto">
-                    Pricing
-                </Link>
-                <Link href="/" className="mr-auto">
-                    About
-                </Link>
+                <Link href="/dashboard/products">Products</Link>
+                <Link href="/dashboard/analytics">Analytics</Link>
+                <Link href="/dashboard/subscription">Subscription</Link>
+                <UserButton />
+                {/*
                 <span className="text-lg">
                     <SignedIn>
                         <Link href="/dashboard">Dashboard</Link>
@@ -26,7 +22,7 @@ export default function NavBar() {
                     <SignedOut>
                         <SignInButton>Login</SignInButton>
                     </SignedOut>
-                </span>
+                </span> */}
             </nav>
         </header>
     );

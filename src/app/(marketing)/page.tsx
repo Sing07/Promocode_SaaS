@@ -169,12 +169,12 @@ function PricingCard({
     return (
         <Card
             className={cn(
-                "relative shadow-none rounded-3xl overflow-hidden",
-                isMostPopular ? "border-accent border-2" : "border-none"
+                "relative shadow-none rounded-3xl overflow-hidden border-2",
+                isMostPopular && "border-accent border-2"
             )}
         >
             {isMostPopular && (
-                <div className="bg-accent text-accent-foreground absolute py-1 px-10 -right-8 top-24 rotate-45 origin-top-right">
+                <div className="bg-accent/20 text-accent-foreground absolute py-1 px-10 -right-8 top-24 rotate-45 origin-top-right">
                     Most popular
                 </div>
             )}
@@ -190,8 +190,8 @@ function PricingCard({
             <CardContent>
                 <SignUpButton>
                     <Button
-                        className="text-lg w-full rounded-lg"
-                        variant={isMostPopular ? "outline" : "default"}
+                        className="text-lg w-full rounded-lg text-white"
+                        variant={isMostPopular ? "accent" : "default"}
                     >
                         Get Started
                     </Button>
