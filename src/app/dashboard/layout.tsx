@@ -6,7 +6,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <div className="bg-accent/5 min-h-screen">
             <div className="">
                 <NavBar />
-                {children}
+                <div className="container py-6">{children}</div>
             </div>
         </div>
     );
