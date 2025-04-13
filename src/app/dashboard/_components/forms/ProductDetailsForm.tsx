@@ -19,6 +19,8 @@ import { productDetailsSchema } from "@/schemas/products";
 // import { createProduct, updateProduct } from "@/server/actions/products";
 // import { useToast } from "@/hooks/use-toast";
 import { RequiredLabelIcon } from "@/components/RequiredLabelIcon";
+import { createProduct } from "@/server/actions/products";
+import { toast } from "sonner";
 
 export function ProductDetailsForm({
     product,
@@ -54,6 +56,12 @@ export function ProductDetailsForm({
         //         variant: data.error ? "destructive" : "default",
         //     });
         // }
+        const data = await createProduct(values)
+
+        if(data) {
+            toast.error("Error")
+            toast("Event happen");
+        }
     }
 
     return (
