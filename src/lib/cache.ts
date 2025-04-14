@@ -6,7 +6,7 @@ export type ValidTags =
     | ReturnType<typeof getUserTag>
     | ReturnType<typeof getIdTag>;
 
-const CACHE_TAGS = {
+export const CACHE_TAGS = {
     products: "products",
     productViews: "productViews",
     subscription: "subscription",
