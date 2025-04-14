@@ -8,6 +8,7 @@ import {
     deleteProduct as deleteProductDb,
 } from "@/server/db/products";
 import { redirect } from "next/navigation";
+// import { revalidatePath } from "next/cache";
 
 export async function createProduct(unsafeData: z.infer<typeof productDetailsSchema>) {
     const { userId } = await auth();
@@ -32,6 +33,10 @@ export async function deleteProduct(id: string) {
     }
 
     const isSuccess = await deleteProductDb({ id, userId });
+
+    // revalidatePath("/dashboard")
+    // revalidatePath("/dashboard/products")
+    // revalidatePath("/dashboard/products/edit");
 
     return {
         error: !isSuccess,

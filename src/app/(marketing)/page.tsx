@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { formatCompactNumber } from "@/formatters";
+import { formatCompactNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
