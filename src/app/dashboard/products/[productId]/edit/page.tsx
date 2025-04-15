@@ -42,7 +42,12 @@ export default async function EditProductPage({
                 <TabsContent value="country">
                     <CountryTab productId={productId} userId={userId}></CountryTab>
                 </TabsContent>
-                <TabsContent value="customization">Customization</TabsContent>
+                <TabsContent value="customization">
+                    <CustomizationsTab
+                        productId={productId}
+                        userId={userId}
+                    ></CustomizationsTab>
+                </TabsContent>
             </Tabs>
         </PageWithBackButton>
     );
@@ -102,6 +107,33 @@ async function CountryTab({ productId, userId }: { productId: string; userId: st
                     //     },
                     // ]}
                 />
+            </CardContent>
+        </Card>
+    );
+}
+
+async function CustomizationsTab({
+    productId,
+    userId,
+}: {
+    productId: string;
+    userId: string;
+}) {
+    // const customization = await getProductCustomization({ productId, userId });
+
+    if (customization == null) return notFound();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-xl">Banner Customization</CardTitle>
+            </CardHeader>
+            <CardContent>
+                {/* <ProductCustomizationForm
+                    canRemoveBranding={await canRemoveBranding(userId)}
+                    canCustomizeBanner={await canCustomizeBanner(userId)}
+                    customization={customization}
+                /> */}
             </CardContent>
         </Card>
     );

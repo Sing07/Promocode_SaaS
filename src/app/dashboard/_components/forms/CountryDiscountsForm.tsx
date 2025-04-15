@@ -16,10 +16,9 @@ import { z } from "zod";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { on } from "events";
-import { FileDiff } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast"
-// import { updateCountryDiscounts } from "@/server/actions/products"
+// import { useToast } from "@/hooks/use-toast";
+import { updateCountryDiscounts } from "@/server/actions/products";
+import { toast } from "sonner";
 
 export function CountryDiscountsForm({
     productId,
@@ -40,6 +39,7 @@ export function CountryDiscountsForm({
         };
     }[];
 }) {
+    // const { toast } = useToast();
     const form = useForm<z.infer<typeof productCountryDiscountsSchema>>({
         resolver: zodResolver(productCountryDiscountsSchema),
         defaultValues: {
@@ -58,17 +58,17 @@ export function CountryDiscountsForm({
     });
 
     async function onSubmit(values: z.infer<typeof productCountryDiscountsSchema>) {
-        // const data = await updateCountryDiscount(productId, values);
+        const data = await updateCountryDiscounts(productId, values);
 
-        // if (data.message) {
-        //     toast({
-        //         title: data.error ? "Error" : "Success",
-        //         description: data.message,
-        //         variant: data.error ? "destructive" : "default",
-        //     });
-        // }
+        if (data.message) {
+            toast(data.error ? "Error" : "Success", {
+                description: data.message,
+                style: data.error
+                    ? { backgroundColor: "#f87171", color: "#fff" }
+                    : undefined,
+            });
+        }
 
-        console.log(values);
     }
 
     return (
@@ -113,6 +113,11 @@ export function CountryDiscountsForm({
                                                         {...field}
                                                         type="number"
                                                         value={field.value ?? ""}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                e.target.valueAsNumber
+                                                            )
+                                                        }
                                                         min="0"
                                                         max="100"
                                                     />
@@ -142,7 +147,7 @@ export function CountryDiscountsForm({
                         </CardContent>
                     </Card>
                 ))}
-                
+
                 <div className="self-end">
                     <Button disabled={form.formState.isSubmitting} type="submit">
                         Save
