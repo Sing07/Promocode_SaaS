@@ -1,4 +1,6 @@
+import { ProductDetailsForm } from "@/app/dashboard/_components/forms/ProductDetailsForm";
 import { PageWithBackButton } from "@/app/dashboard/_components/PageWithBackButton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getProduct } from "@/server/db/products";
 import { auth } from "@clerk/nextjs/server";
@@ -27,10 +29,34 @@ export default async function EditProductPage({
                     <TabsTrigger value="country">Country</TabsTrigger>
                     <TabsTrigger value="customization">Customization</TabsTrigger>
                 </TabsList>
-                <TabsContent value="details">Details</TabsContent>
+                <TabsContent value="details">
+                    <DetailsTab product = {product}></DetailsTab>
+                </TabsContent>
                 <TabsContent value="country">Country</TabsContent>
                 <TabsContent value="customization">Customization</TabsContent>
             </Tabs>
         </PageWithBackButton>
+    );
+}
+
+function DetailsTab({
+    product,
+}: {
+    product: {
+        id: string;
+        name: string;
+        description: string | null;
+        url: string;
+    };
+}) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-xl">Product Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ProductDetailsForm product={product} />
+            </CardContent>
+        </Card>
     );
 }

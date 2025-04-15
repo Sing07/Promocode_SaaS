@@ -19,7 +19,7 @@ import { productDetailsSchema } from "@/schemas/products";
 // import { createProduct, updateProduct } from "@/server/actions/products";
 // import { useToast } from "@/hooks/use-toast";
 import { RequiredLabelIcon } from "@/components/RequiredLabelIcon";
-import { createProduct } from "@/server/actions/products";
+import { createProduct, updateProduct } from "@/server/actions/products";
 import { toast } from "sonner";
 
 export function ProductDetailsForm({
@@ -45,9 +45,9 @@ export function ProductDetailsForm({
     });
 
     async function onSubmit(values: z.infer<typeof productDetailsSchema>) {
-        // const action =
-        //     product == null ? createProduct : updateProduct.bind(null, product.id);
-        // const data = await action(values);
+        const action =
+            product == null ? createProduct : updateProduct.bind(null, product.id);
+        const data = await action(values);
 
         // if (data?.message) {
         //     toast({
@@ -56,12 +56,20 @@ export function ProductDetailsForm({
         //         variant: data.error ? "destructive" : "default",
         //     });
         // }
-        const data = await createProduct(values)
 
-        if(data) {
-            toast.error("Error")
-            toast("Event happen");
+        if (data?.message) {
+            toast(data.error ? "Error" : "Success", {
+                description: data.message,
+                style: data.error
+                    ? { backgroundColor: "#f87171", color: "#fff" }
+                    : undefined,
+            });
         }
+
+        // if(data) {
+        //     toast.error("Error")
+        //     toast("Event happen");
+        // }
     }
 
     return (
