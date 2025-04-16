@@ -12,7 +12,7 @@ import {
     getUserTag,
     revalidateDbCache,
 } from "@/lib/cache";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, count, eq, inArray, sql } from "drizzle-orm";
 import { BatchItem } from "drizzle-orm/batch";
 
 export function getProductCountryGroups({
@@ -63,6 +63,14 @@ export function getProduct({ id, userId }: { id: string; userId: string }) {
     return cacheFn({ id, userId });
 }
 
+export function getProductCount(userId: string) {
+    const cacheFn = dbCache(getProductCountInternal, {
+        tags: [getUserTag(userId, CACHE_TAGS.products)],
+    });
+
+    return cacheFn(userId);
+}
+
 export async function createProduct(data: typeof ProductTable.$inferInsert) {
     const [newProduct] = await db
         .insert(ProductTable)
@@ -109,6 +117,25 @@ export async function updateProduct(
     }
 
     return rowCount > 0;
+}
+
+export async function updateProductCustomization(
+    data: Partial<typeof ProductCustomizationTable.$inferInsert>,
+    { productId, userId }: { productId: string; userId: string }
+) {
+    const product = await getProduct({ id: productId, userId });
+    if (product == null) return;
+
+    await db
+        .update(ProductCustomizationTable)
+        .set(data)
+        .where(eq(ProductCustomizationTable.productId, productId));
+
+    revalidateDbCache({
+        tag: CACHE_TAGS.products,
+        userId,
+        id: productId,
+    });
 }
 
 export async function deleteProduct({ id, userId }: { id: string; userId: string }) {
@@ -180,6 +207,15 @@ function getProductInternal({ id, userId }: { id: string; userId: string }) {
         where: ({ clerkUserId, id: idCol }, { eq, and }) =>
             and(eq(clerkUserId, userId), eq(idCol, id)),
     });
+}
+
+async function getProductCountInternal(userId: string) {
+    const counts = await db
+        .select({ productCount: count() })
+        .from(ProductTable)
+        .where(eq(ProductTable.clerkUserId, userId));
+
+    return counts[0]?.productCount ?? 0
 }
 
 export async function updateCountryDiscounts(
