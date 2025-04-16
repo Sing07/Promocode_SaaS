@@ -11,15 +11,16 @@ import {
     updateProductCustomization as updateProductCustomizationDb,
 } from "@/server/db/products";
 import { redirect } from "next/navigation";
-import { canCustomizeBanner } from "../permissions";
+import { canCreateProduct, canCustomizeBanner } from "../permissions";
 // import { revalidatePath } from "next/cache";
 
 export async function createProduct(unsafeData: z.infer<typeof productDetailsSchema>) {
     const { userId } = await auth();
-
     const { success, data } = productDetailsSchema.safeParse(unsafeData);
 
-    if (!success || userId == null) {
+    const canCreate = await canCreateProduct(userId)
+
+    if (!success || userId == null || !canCreate) {
         return { error: true, message: "There was an error creating your product" };
     }
 
