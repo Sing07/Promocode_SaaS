@@ -8,10 +8,18 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { subscriptionTiers, subscriptionTiersInOrder, TierNames } from "@/data/subscriptionTiers";
+import {
+    subscriptionTiers,
+    subscriptionTiersInOrder,
+    TierNames,
+} from "@/data/subscriptionTiers";
 import { formatCompactNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { createCancelSession, createCheckoutSession, createCustomerPortalSession } from "@/server/actions/stripe";
+import {
+    createCancelSession,
+    createCheckoutSession,
+    createCustomerPortalSession,
+} from "@/server/actions/stripe";
 import { getProductCount } from "@/server/db/products";
 import { getProductViewCount } from "@/server/db/productViews";
 import { getUserSubscriptionTier } from "@/server/db/subscription";
@@ -22,14 +30,10 @@ import { ReactNode } from "react";
 
 export default async function SubscriptionPage() {
     const { userId, redirectToSignIn } = await auth();
-
     if (userId == null) return redirectToSignIn();
-
     const tier = await getUserSubscriptionTier(userId);
-
     const productCount = await getProductCount(userId);
     const pricingViewCount = await getProductViewCount(userId, startOfMonth(new Date()));
-
     return (
         <>
             <h1 className="mb-6 text-3xl font-semibold">Your Subscription</h1>
@@ -65,7 +69,7 @@ export default async function SubscriptionPage() {
                         </CardContent>
                     </Card>
                 </div>
-                {tier == subscriptionTiers.Free && (
+                {tier != subscriptionTiers.Free && (
                     <Card>
                         <CardHeader>
                             <CardTitle>
@@ -128,7 +132,6 @@ function PricingCard({
                         name === "Free"
                             ? createCancelSession
                             : createCheckoutSession.bind(null, name)
-                        // undefined
                     }
                 >
                     <Button

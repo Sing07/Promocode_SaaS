@@ -5,6 +5,11 @@ import { env } from "@/data/env/server";
 import { db } from "@/drizzle/db";
 import { UserSubscriptionTable } from "@/drizzle/schema";
 import { deleteUser } from "@/server/db/users";
+import { Stripe } from "stripe";
+import { getUserSubscription } from "@/server/db/subscription";
+
+
+const stripe = new Stripe(env.STRIPE_SECRET_KEY);
 
 export async function POST(req: Request) {
     const headerPayload = await headers();
@@ -43,14 +48,15 @@ export async function POST(req: Request) {
                 clerkUserId: event.data.id,
                 tier: "Free",
             });
-            break
+            break;
         }
         case "user.deleted": {
             if (event.data.id != null) {
-                if(event.data.id != null){
-                    await deleteUser(event.data.id);
-                    // TODO: remove stripe subscription when added later
+                const userSubscription = await getUserSubscription(event.data.id)
+                if (userSubscription?.stripeSubscriptionId != null) {
+                    await stripe.subscriptions.cancel(userSubscription?.stripeSubscriptionId)
                 }
+                await deleteUser(event.data.id); 
             }
         }
     }
