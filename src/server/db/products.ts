@@ -71,6 +71,8 @@ export function getProductCount(userId: string) {
     return cacheFn(userId);
 }
 
+
+
 export async function createProduct(data: typeof ProductTable.$inferInsert) {
     const [newProduct] = await db
         .insert(ProductTable)
