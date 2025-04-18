@@ -1,8 +1,9 @@
 import { HasPermission } from "@/components/HasPermission";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getViewsByDayChartData } from "@/server/db/productViews";
+import { CHART_INTERVALS, getViewsByCountryChartData, getViewsByDayChartData } from "@/server/db/productViews";
 import { canAccessAnalytics } from "@/server/permissions";
 import { auth } from "@clerk/nextjs/server";
+import { ViewsByCountryChart } from "../_components/charts/ViewsByCountryChart";
 
 export default async function AnalyticsPage({
     searchParams,
@@ -17,14 +18,25 @@ export default async function AnalyticsPage({
 
     if (userId == null) return redirectToSignIn();
 
+    const interval =
+        CHART_INTERVALS[searchParams.interval as keyof typeof CHART_INTERVALS] ??
+        CHART_INTERVALS.last7Days;
+    const timezone = searchParams.timezome || "UTC";
+    const productId = searchParams.productId;
+
     return (
         <>
             <h1 className="text-3xl font-semibold">Analytics</h1>
             <HasPermission permission={canAccessAnalytics} renderFallback>
                 <div className="flex flex-col gap-8">
-                    <ViewsByDayCard />
-                    <ViewsByPPPCard />
-                    <ViewsByCountryCard />
+                    {/* <ViewsByDayCard /> */}
+                    {/* <ViewsByPPPCard /> */}
+                    <ViewsByCountryCard
+                        interval={interval}
+                        timezone={timezone}
+                        userId={userId}
+                        productId={productId}
+                    />
                 </div>
             </HasPermission>
         </>
