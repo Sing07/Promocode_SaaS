@@ -54,35 +54,35 @@ export function getViewsByCountryChartData({
     });
 }
 
-// export function getViewsByPPPChartData({
-//     timezone,
-//     productId,
-//     userId,
-//     interval,
-// }: {
-//     timezone: string;
-//     productId?: string;
-//     userId: string;
-//     interval: (typeof CHART_INTERVALS)[keyof typeof CHART_INTERVALS];
-// }) {
-//     const cacheFn = dbCache(getViewsByPPPChartDataInternal, {
-//         tags: [
-//             getUserTag(userId, CACHE_TAGS.productViews),
-//             productId == null
-//                 ? getUserTag(userId, CACHE_TAGS.products)
-//                 : getIdTag(productId, CACHE_TAGS.products),
-//             getGlobalTag(CACHE_TAGS.countries),
-//             getGlobalTag(CACHE_TAGS.countryGroups),
-//         ],
-//     });
+export function getViewsByPPPChartData({
+    timezone,
+    productId,
+    userId,
+    interval,
+}: {
+    timezone: string;
+    productId?: string;
+    userId: string;
+    interval: (typeof CHART_INTERVALS)[keyof typeof CHART_INTERVALS];
+}) {
+    const cacheFn = dbCache(getViewsByPPPChartDataInternal, {
+        tags: [
+            getUserTag(userId, CACHE_TAGS.productViews),
+            productId == null
+                ? getUserTag(userId, CACHE_TAGS.products)
+                : getIdTag(productId, CACHE_TAGS.products),
+            getGlobalTag(CACHE_TAGS.countries),
+            getGlobalTag(CACHE_TAGS.countryGroups),
+        ],
+    });
 
-//     return cacheFn({
-//         timezone,
-//         productId,
-//         userId,
-//         interval,
-//     });
-// }
+    return cacheFn({
+        timezone,
+        productId,
+        userId,
+        interval,
+    });
+}
 
 export function getViewsByDayChartData({
     timezone,
@@ -184,45 +184,45 @@ async function getViewsByCountryChartDataInternal({
         .limit(25);
 }
 
-// async function getViewsByPPPChartDataInternal({
-//     timezone,
-//     productId,
-//     userId,
-//     interval,
-// }: {
-//     timezone: string;
-//     productId?: string;
-//     userId: string;
-//     interval: (typeof CHART_INTERVALS)[keyof typeof CHART_INTERVALS];
-// }) {
-//     const startDate = startOfDay(interval.startDate, { in: tz(timezone) });
-//     const productsSq = getProductSubQuery(userId, productId);
-//     const productViewSq = db.$with("productViews").as(
-//         db
-//             .with(productsSq)
-//             .select({
-//                 visitedAt: sql`${ProductViewTable.visitedAt} AT TIME ZONE ${timezone}`
-//                     .inlineParams()
-//                     .as("visitedAt"),
-//                 countryGroupId: CountryTable.countryGroupId,
-//             })
-//             .from(ProductViewTable)
-//             .innerJoin(productsSq, eq(productsSq.id, ProductViewTable.productId))
-//             .innerJoin(CountryTable, eq(CountryTable.id, ProductViewTable.countryId))
-//             .where(({ visitedAt }) => gte(visitedAt, startDate))
-//     );
+async function getViewsByPPPChartDataInternal({
+    timezone,
+    productId,
+    userId,
+    interval,
+}: {
+    timezone: string;
+    productId?: string;
+    userId: string;
+    interval: (typeof CHART_INTERVALS)[keyof typeof CHART_INTERVALS];
+}) {
+    const startDate = startOfDay(interval.startDate, { in: tz(timezone) });
+    const productsSq = getProductSubQuery(userId, productId);
+    const productViewSq = db.$with("productViews").as(
+        db
+            .with(productsSq)
+            .select({
+                visitedAt: sql`${ProductViewTable.visitedAt} AT TIME ZONE ${timezone}`
+                    .inlineParams()
+                    .as("visitedAt"),
+                countryGroupId: CountryTable.countryGroupId,
+            })
+            .from(ProductViewTable)
+            .innerJoin(productsSq, eq(productsSq.id, ProductViewTable.productId))
+            .innerJoin(CountryTable, eq(CountryTable.id, ProductViewTable.countryId))
+            .where(({ visitedAt }) => gte(visitedAt, startDate))
+    );
 
-//     return await db
-//         .with(productViewSq)
-//         .select({
-//             pppName: CountryGroupTable.name,
-//             views: count(productViewSq.visitedAt),
-//         })
-//         .from(CountryGroupTable)
-//         .leftJoin(productViewSq, eq(productViewSq.countryGroupId, CountryGroupTable.id))
-//         .groupBy(({ pppName }) => [pppName])
-//         .orderBy(({ pppName }) => pppName);
-// }
+    return await db
+        .with(productViewSq)
+        .select({
+            pppName: CountryGroupTable.name,
+            views: count(productViewSq.visitedAt),
+        })
+        .from(CountryGroupTable)
+        .leftJoin(productViewSq, eq(productViewSq.countryGroupId, CountryGroupTable.id))
+        .groupBy(({ pppName }) => [pppName])
+        .orderBy(({ pppName }) => pppName);
+}
 
 async function getViewsByDayChartDataInternal({
     timezone,
