@@ -10,17 +10,27 @@ export function removeTrailingSlash(path: string) {
 }
 
 export function createURL(
-    href: string,
-    oldParams: Record<string, string>,
-    newParams: Record<string, string | undefined>
+  href: string,
+  oldParams: Record<string, string | undefined>,
+  newParams: Record<string, string | undefined>
 ) {
-    const params = new URLSearchParams(oldParams);
-    Object.entries(newParams).forEach(([key, value]) => {
-        if (value == undefined) {
-            params.delete(key);
-        } else {
-            params.set(key, value);
-        }
-    });
-    return `${href}?${params.toString()}`;
+  const params = new URLSearchParams();
+
+  // Add oldParams
+  Object.entries(oldParams).forEach(([key, value]) => {
+    if (value !== undefined) {
+      params.set(key, value);
+    }
+  });
+
+  // Apply newParams (overrides or deletes)
+  Object.entries(newParams).forEach(([key, value]) => {
+    if (value === undefined) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+  });
+
+  return `${href}?${params.toString()}`;
 }
